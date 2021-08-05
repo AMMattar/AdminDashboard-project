@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 02, 2021 at 08:53 PM
+-- Generation Time: Aug 05, 2021 at 06:06 PM
 -- Server version: 10.4.19-MariaDB
 -- PHP Version: 8.0.6
 
@@ -30,6 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `appointment` (
   `id` int(11) NOT NULL,
   `phoneNumber` char(30) NOT NULL,
+  `states_co` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   `course_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -38,9 +39,12 @@ CREATE TABLE `appointment` (
 -- Dumping data for table `appointment`
 --
 
-INSERT INTO `appointment` (`id`, `phoneNumber`, `user_id`, `course_id`) VALUES
-(2, '0101010101010', 2, 14),
-(11, '53240', 3, 11);
+INSERT INTO `appointment` (`id`, `phoneNumber`, `states_co`, `user_id`, `course_id`) VALUES
+(2, '0101010101010', 3, 2, 14),
+(12, '12565852', 3, 3, 1),
+(17, '15415312', 1, 3, 11),
+(18, '00000000000', 3, 7, 1),
+(19, '1234567', 1, 12, 1);
 
 -- --------------------------------------------------------
 
@@ -59,8 +63,8 @@ CREATE TABLE `courses` (
 --
 
 INSERT INTO `courses` (`id`, `name`, `id_sector`) VALUES
-(1, 'PHP', 1),
-(11, 'python', 2),
+(1, 'PHP', 7),
+(11, 'python', 4),
 (14, 'java', 2);
 
 -- --------------------------------------------------------
@@ -82,8 +86,28 @@ INSERT INTO `coursestypes` (`id`, `sector`) VALUES
 (1, 'webDevelopment'),
 (2, 'computerScience'),
 (4, 'dataScience'),
-(5, 'it'),
-(6, 'security');
+(6, 'security'),
+(7, 'it');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `course_status`
+--
+
+CREATE TABLE `course_status` (
+  `id` int(11) NOT NULL,
+  `states` char(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `course_status`
+--
+
+INSERT INTO `course_status` (`id`, `states`) VALUES
+(1, 'pending'),
+(2, 'approved'),
+(3, 'refused');
 
 -- --------------------------------------------------------
 
@@ -102,7 +126,7 @@ CREATE TABLE `roles` (
 
 INSERT INTO `roles` (`id`, `role`) VALUES
 (1, 'superAdmin'),
-(2, 'admins'),
+(2, 'admin'),
 (3, 'user'),
 (5, 'guest');
 
@@ -127,10 +151,11 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `role_id`) VALUES
 (2, 'ahmed', 'ahmed@admin.com', '123456', 1),
 (3, 'root', 'root@admin.com', '123456', 1),
-(7, 'test', 'test@admin.com', '123456', 3),
-(8, 'root1', 'root1@admin.com', '123456', 2),
-(9, 'root2', 'root2@admin.com', '123456', 3),
-(10, 'test1', 'test1@admin.com', '123456', 3);
+(7, 'test', 'test@admin.com', '123456', 2),
+(8, 'root1', 'root1@admin.com', '123456', 5),
+(10, 'test1', 'test1@admin.com', '123456', 3),
+(11, 'root2', 'root2@admin.com', '123456', 5),
+(12, 'test3', 'test3@admin.com', '123456', 3);
 
 --
 -- Indexes for dumped tables
@@ -142,7 +167,8 @@ INSERT INTO `users` (`id`, `name`, `email`, `password`, `role_id`) VALUES
 ALTER TABLE `appointment`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`),
-  ADD KEY `course_id` (`course_id`);
+  ADD KEY `course_id` (`course_id`),
+  ADD KEY `status` (`states_co`);
 
 --
 -- Indexes for table `courses`
@@ -155,6 +181,12 @@ ALTER TABLE `courses`
 -- Indexes for table `coursestypes`
 --
 ALTER TABLE `coursestypes`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `course_status`
+--
+ALTER TABLE `course_status`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -179,19 +211,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `appointment`
 --
 ALTER TABLE `appointment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `coursestypes`
 --
 ALTER TABLE `coursestypes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `course_status`
+--
+ALTER TABLE `course_status`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `roles`
@@ -203,7 +241,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables
@@ -214,6 +252,7 @@ ALTER TABLE `users`
 --
 ALTER TABLE `appointment`
   ADD CONSTRAINT `coursesRelation` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+  ADD CONSTRAINT `statsRelation` FOREIGN KEY (`states_co`) REFERENCES `course_status` (`id`),
   ADD CONSTRAINT `userRelation` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 --
