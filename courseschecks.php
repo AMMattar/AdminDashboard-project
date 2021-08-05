@@ -2,15 +2,33 @@
 
     require 'connectionDB.php'; 
 
-
+    include './helpers/functions.php';
     require 'loginCheck.php';
 
     //include "userCheck.php";
 
 
-    $sql = "SELECT courses.id, courses.name, coursestypes.id AS course_id, coursestypes.sector FROM `courses` JOIN coursestypes ON courses.id_sector = coursestypes.id ORDER BY courses.id DESC";
+    $id = '';
+   if($_SERVER['REQUEST_METHOD'] == "GET"){
+
+    // LOGIC .... 
+      $Message = [];
+      $id  = Sanitize($_GET['id'],1);
+     
+       if(!Validator($id,3)){
+ 
+        $Message['id'] = "Invalid ID";
+        
+        $_SESSION['messages'] = $Message;
+       header("Location: index.php");
+       }
+
+    }
+    
+    $sql = "SELECT appointment.id, appointment.phoneNumber,appointment.states_co, course_status.states, users.name as user_name,users.id, courses.name AS course_name FROM `appointment` JOIN users ON appointment.user_id = users.id JOIN courses ON appointment.course_id = courses.id join course_status on appointment.states_co = course_status.id where users.id = '$id'";
 
     $op  = mysqli_query($con,$sql);
+
 
 ?>
 
@@ -85,8 +103,8 @@
             <tr>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Sector</th>
-                <th>Action</th>
+                <th>Course</th>
+                <th>Status</th>
             </tr>
 
             <?php    
@@ -97,16 +115,16 @@
 
             <tr>
                 <td> <?php echo $data_courses['id'];?></td>
-                <td> <?php echo $data_courses['name'];?></td>
-                <td> <?php echo $data_courses['sector'];?></td>
-                <td> <button><a href="book.php?id=<?php echo $data_courses['id'];?>">Book your Course</a></button></td>
+                <td> <?php echo $data_courses['user_name'];?></td>
+                <td> <?php echo $data_courses['course_name'];?></td>
+                <td> <?php echo $data_courses['states'];?></td>
             </tr>
 
 
             <?php } ?>
             <!-- end table -->
         </table>
-        <a href="courseschecks.php?id=<?php echo $_SESSION['data']['id'];?>">Check your Courses</a>
+        <a href="http://localhost/Group4/project1/index.php">Brows More Courses</a>
     </div>
     <!-- end .container -->
 

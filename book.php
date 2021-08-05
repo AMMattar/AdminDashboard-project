@@ -54,7 +54,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
         //exit();
     # DB OPERATION .... 
 
-    $sql = "INSERT INTO appointment (phoneNumber,user_id,course_id) VALUES ('$phone','$id','$course')";
+    $sql = "INSERT INTO appointment (phoneNumber,states_co,user_id,course_id) VALUES ('$phone','1','$id','$course')";
 
     $op  = mysqli_query($con,$sql);
 

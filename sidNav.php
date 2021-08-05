@@ -14,7 +14,7 @@
 
                 <?php 
                                
-                               $sidArray = ['Courses','CoursesTypes','Users (Super Admin)','Roles (Super Admin)','Appointments'];
+                               $sidArray = ['Courses','CoursesTypes','Users','Roles','Appointments'];
 
                               foreach($sidArray as $key => $data){
                             ?>
